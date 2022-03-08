@@ -130,6 +130,42 @@ public class GridManager : MonoBehaviour
         }
         return false;
     }
+    private bool CheckForMatchOf6(int row, int col)
+    {
+        if (tempGems.Count != 6)
+        {
+            Debug.LogWarning("sds");
+            return false;
+        }
+
+        if (tempGems[0] != null && tempGems[1] != null && tempGems[2] != null && tempGems[3] != null && tempGems[4] != null && tempGems[5] != null)
+        {
+            if (tempGems[0].gemType == tempGems[1].gemType && tempGems[1].gemType == tempGems[2].gemType && tempGems[2].gemType == tempGems[3].gemType && tempGems[3].gemType == tempGems[4].gemType && tempGems[4].gemType == tempGems[5].gemType)
+            {
+                Debug.Log("We got a match of (6) at row: " + row.ToString() + " col: " + col.ToString());
+
+                foreach (Gem g in tempGems)
+                {
+                    bool noDuplicates = true;
+
+                    foreach (Gem h in matchedGems)
+                    {
+                        if (h.row == g.row && h.col == g.col)
+                        {
+                            noDuplicates = false;
+                        }
+                    }
+                    if (noDuplicates)
+                    {
+                        matchedGems.Add(g);
+                    }
+                }
+
+                return true;
+            }
+        }
+        return false;
+    }
 
     private bool AddNeighborColums(int row, int col, int numColums)
     {
@@ -184,15 +220,23 @@ public class GridManager : MonoBehaviour
             for (int col = 0; col < 8; col++)
             {
                 // COLS
+                if (AddNeighborColums(row, col, 6))
+                {
+                    if (CheckForMatchOf6(row, col))
+                    {
+                        // TODO: Destroy all matched gems and change the array location of the gems above..
+                        
+                        DestroyMatchedGems();
+                        continue;
+                    }
+                }
                 if (AddNeighborColums(row, col, 5))
                 { 
                     if (CheckForMatchOf5(row, col))
                     {
                         // TODO: Destroy all matched gems and change the array location of the gems above..
-                        foreach(Gem g in matchedGems)
-                        {
-                            g.GetComponent<SpriteRenderer>().color = Color.white;
-                        }
+                        
+                        DestroyMatchedGems();
 
                         continue;
                     }
@@ -203,11 +247,9 @@ public class GridManager : MonoBehaviour
                     if (CheckForMatchOf4(row, col))
                     {
                         // TODO: Destroy all matched gems and change the array location of the gems above..
-                        foreach (Gem g in matchedGems)
-                        {
-                            g.GetComponent<SpriteRenderer>().color = Color.white;
-                        }
+                        
 
+                        DestroyMatchedGems();
                         continue;
                     }
                 }
@@ -216,25 +258,29 @@ public class GridManager : MonoBehaviour
                     if (CheckForMatchOf3(row, col))
                     {
                         // TODO: Destroy all matched gems and change the array location of the gems above..
-                        foreach (Gem g in matchedGems)
-                        {
-                            g.GetComponent<SpriteRenderer>().color = Color.white;
-                        }
+
+                        DestroyMatchedGems();
 
                         continue;
                     }
                 }
                 // ROWS
+                if (AddNeighborRows(row, col, 6))
+                {
+                    if (CheckForMatchOf6(row, col))
+                    {
+                        // TODO: Destroy all matched gems and change the array location of the gems above..
+                        DestroyMatchedGems();
+                        continue;
+                    }
+                }
+
                 if (AddNeighborRows(row, col, 5))
                 {
                     if (CheckForMatchOf5(row, col))
                     {
                         // TODO: Destroy all matched gems and change the array location of the gems above..
-                        foreach (Gem g in matchedGems)
-                        {
-                            g.GetComponent<SpriteRenderer>().color = Color.white;
-                        }
-
+                        DestroyMatchedGems();
                         continue;
                     }
                 }
@@ -244,11 +290,7 @@ public class GridManager : MonoBehaviour
                     if (CheckForMatchOf4(row, col))
                     {
                         // TODO: Destroy all matched gems and change the array location of the gems above..
-                        foreach (Gem g in matchedGems)
-                        {
-                            g.GetComponent<SpriteRenderer>().color = Color.white;
-                        }
-
+                        DestroyMatchedGems();
                         continue;
                     }
                 }
@@ -257,11 +299,7 @@ public class GridManager : MonoBehaviour
                     if (CheckForMatchOf3(row, col))
                     {
                         // TODO: Destroy all matched gems and change the array location of the gems above..
-                        foreach (Gem g in matchedGems)
-                        {
-                            g.GetComponent<SpriteRenderer>().color = Color.white;
-                        }
-
+                        DestroyMatchedGems();
                         continue;
                     }
                 }
@@ -271,5 +309,26 @@ public class GridManager : MonoBehaviour
             GridReady = false;
         }
         
+    }
+    public void DestroyMatchedGems()
+    {
+        foreach (Gem gem in matchedGems)
+        {
+            Destroy(gem.gameObject);
+        }
+        StartCoroutine(EnumerateGems());
+    }
+    public IEnumerator EnumerateGems()
+    {
+        // This has some issues
+        yield return null;
+        //foreach(Gem g in matchedGems)
+        //{
+        //    GemSpawner.Instance.SpawnGemAtColumn(g.col);
+        //    yield return new WaitForSeconds(0.75f);
+        //}
+
+
+        matchedGems.Clear();
     }
 }

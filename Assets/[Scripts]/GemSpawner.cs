@@ -25,7 +25,8 @@ public class GemSpawner : MonoBehaviour
     [SerializeField]
     private Transform gridMaskTransform;
 
-
+    private static GemSpawner instance;
+    public static GemSpawner Instance { get { return instance; } }
     private IEnumerator SpawnGrid()
     {
         GridManager.Instance.GridReady = false;
@@ -54,9 +55,23 @@ public class GemSpawner : MonoBehaviour
     {
         StartCoroutine(SpawnGrid());
     }
+    public void SpawnGemAtColumn(int columnIdx)
+    {
+        int randIdx = Random.Range(0, gemPrefabs.Length);
+        GameObject go = Instantiate(gemPrefabs[randIdx], gemSpawners[columnIdx].position, Quaternion.identity, gridMaskTransform);
+        Gem gemComp = go.GetComponent<Gem>();
+        
+        gemComp.col = columnIdx;
+        
+        // As the gem falls through the grid, it will intersect the row triggers and it will change row index accordingly.
+        gemComp.row = 0;
+
+        GridManager.Instance.gems[gemComp.row, gemComp.col] = gemComp;
+    }
     // Start is called before the first frame update
     void Start()
     {
+        instance = this;
         SpawnEntireGrid();
     }
     // Update is called once per frame
