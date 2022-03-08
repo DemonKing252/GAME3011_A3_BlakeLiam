@@ -1152,12 +1152,24 @@ PrefabInstance:
       objectReference: {fileID: 1613368569}
     - target: {fileID: 6313428986480408744, guid: b2cd594d980c14646b5e4eae6edebb9c, type: 3}
       propertyPath: gemPrefabs.Array.size
-      value: 3
+      value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 6313428986480408744, guid: b2cd594d980c14646b5e4eae6edebb9c, type: 3}
+      propertyPath: gemPrefabs.Array.data[3]
+      value: 
+      objectReference: {fileID: 2739243463821453039, guid: e7a133d5a2be7cb43a92478dc3cf1bc2, type: 3}
     - target: {fileID: 6313428986480408744, guid: b2cd594d980c14646b5e4eae6edebb9c, type: 3}
       propertyPath: gemPrefabs.Array.data[4]
       value: 
-      objectReference: {fileID: 2739243463821453039, guid: e7a133d5a2be7cb43a92478dc3cf1bc2, type: 3}
+      objectReference: {fileID: 1158587107688169112, guid: 6e7e7da74fc40a447b2156beec0ecc2e, type: 3}
+    - target: {fileID: 6313428986480408744, guid: b2cd594d980c14646b5e4eae6edebb9c, type: 3}
+      propertyPath: gemPrefabs.Array.data[5]
+      value: 
+      objectReference: {fileID: 2613683987340264859, guid: 60c4936e21ce3a640bd0b5c127637927, type: 3}
+    - target: {fileID: 6313428986480408744, guid: b2cd594d980c14646b5e4eae6edebb9c, type: 3}
+      propertyPath: gemPrefabs.Array.data[6]
+      value: 
+      objectReference: {fileID: 3542281341886054534, guid: bc17102ef3ac8a643ab76830fc0d597a, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b2cd594d980c14646b5e4eae6edebb9c, type: 3}
 --- !u!1001 &6018151555888169532

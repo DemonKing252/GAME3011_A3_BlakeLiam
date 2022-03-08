@@ -47,7 +47,7 @@ public class GemSpawner : MonoBehaviour
                 GridManager.Instance.gems[7 - rows, cols] = gemComp;
             }
             // Wait a 1/2 second then spawn the next row
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.25f);
         }
         GridManager.Instance.GridReady = true;
     }
@@ -60,7 +60,8 @@ public class GemSpawner : MonoBehaviour
         int randIdx = Random.Range(0, gemPrefabs.Length);
         GameObject go = Instantiate(gemPrefabs[randIdx], gemSpawners[columnIdx].position, Quaternion.identity, gridMaskTransform);
         Gem gemComp = go.GetComponent<Gem>();
-        
+
+        gemComp.gemType = (GemType)randIdx;
         gemComp.col = columnIdx;
         
         // As the gem falls through the grid, it will intersect the row triggers and it will change row index accordingly.

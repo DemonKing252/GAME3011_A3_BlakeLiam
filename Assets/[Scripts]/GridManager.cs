@@ -226,7 +226,6 @@ public class GridManager : MonoBehaviour
                     {
                         // TODO: Destroy all matched gems and change the array location of the gems above..
                         
-                        DestroyMatchedGems();
                         continue;
                     }
                 }
@@ -236,8 +235,6 @@ public class GridManager : MonoBehaviour
                     {
                         // TODO: Destroy all matched gems and change the array location of the gems above..
                         
-                        DestroyMatchedGems();
-
                         continue;
                     }
                 }
@@ -248,8 +245,6 @@ public class GridManager : MonoBehaviour
                     {
                         // TODO: Destroy all matched gems and change the array location of the gems above..
                         
-
-                        DestroyMatchedGems();
                         continue;
                     }
                 }
@@ -258,8 +253,6 @@ public class GridManager : MonoBehaviour
                     if (CheckForMatchOf3(row, col))
                     {
                         // TODO: Destroy all matched gems and change the array location of the gems above..
-
-                        DestroyMatchedGems();
 
                         continue;
                     }
@@ -270,7 +263,6 @@ public class GridManager : MonoBehaviour
                     if (CheckForMatchOf6(row, col))
                     {
                         // TODO: Destroy all matched gems and change the array location of the gems above..
-                        DestroyMatchedGems();
                         continue;
                     }
                 }
@@ -280,7 +272,6 @@ public class GridManager : MonoBehaviour
                     if (CheckForMatchOf5(row, col))
                     {
                         // TODO: Destroy all matched gems and change the array location of the gems above..
-                        DestroyMatchedGems();
                         continue;
                     }
                 }
@@ -290,7 +281,6 @@ public class GridManager : MonoBehaviour
                     if (CheckForMatchOf4(row, col))
                     {
                         // TODO: Destroy all matched gems and change the array location of the gems above..
-                        DestroyMatchedGems();
                         continue;
                     }
                 }
@@ -299,34 +289,36 @@ public class GridManager : MonoBehaviour
                     if (CheckForMatchOf3(row, col))
                     {
                         // TODO: Destroy all matched gems and change the array location of the gems above..
-                        DestroyMatchedGems();
                         continue;
                     }
                 }
 
 
             }
-            GridReady = false;
         }
-        
+
+        DestroyMatchedGems();
+        GridReady = false;
+
     }
     public void DestroyMatchedGems()
     {
-        foreach (Gem gem in matchedGems)
-        {
-            Destroy(gem.gameObject);
-        }
         StartCoroutine(EnumerateGems());
     }
     public IEnumerator EnumerateGems()
     {
+        foreach (Gem g in matchedGems)
+            Destroy(g.gameObject);
+        
         // This has some issues
-        yield return null;
-        //foreach(Gem g in matchedGems)
-        //{
-        //    GemSpawner.Instance.SpawnGemAtColumn(g.col);
-        //    yield return new WaitForSeconds(0.75f);
-        //}
+        yield return new WaitForSeconds(0.5f);
+        foreach (Gem g in matchedGems)
+        {
+            Debug.Log("Respawning gem...");
+            GemSpawner.Instance.SpawnGemAtColumn(g.col);
+            yield return new WaitForSeconds(0.2f);
+        }
+        GridReady = true;
 
 
         matchedGems.Clear();
