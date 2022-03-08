@@ -44,4 +44,9 @@ public class Gem : MonoBehaviour
         else
             return null;
     }
+    public void OnMouseDown()
+    {
+        Debug.Log("Clicked on gem row: " + row.ToString() + " col: " + col.ToString());
+    }
+
 }

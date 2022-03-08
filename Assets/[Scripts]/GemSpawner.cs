@@ -4,11 +4,11 @@ using UnityEngine;
 public enum GemType
 {
     Blue,
+    Brown,
     Cyan,
     Green,
     Lilac,
     Red,
-    Brown,
     Yellow,
     NumTypes
 }
