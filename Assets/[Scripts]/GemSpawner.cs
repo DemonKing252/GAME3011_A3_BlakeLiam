@@ -94,7 +94,7 @@ public class GemSpawner : MonoBehaviour
         gemComp.col = columnIdx;
         
         // As the gem falls through the grid, it will intersect the row triggers and it will change row index accordingly.
-        gemComp.row = 7;
+        gemComp.row = 0;
 
         GridManager.Instance.gems[gemComp.row, gemComp.col] = gemComp;
     }

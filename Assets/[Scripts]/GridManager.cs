@@ -29,7 +29,7 @@ public class GridManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        CheckForMatches();   
+        CheckForMatches();
     }
     private bool CheckForMatchOf3(int row, int col)
     {
@@ -42,7 +42,6 @@ public class GridManager : MonoBehaviour
             if (tempGems[0].gemType == tempGems[1].gemType && tempGems[1].gemType == tempGems[2].gemType)
             {
                 //Debug.Log("Got here A3");
-                Debug.Log("We got a match of (3) at row: " + row.ToString() + " col: " + col.ToString());
                 foreach(Gem g in tempGems)
                 {
                     bool noDuplicates = true;
@@ -136,7 +135,6 @@ public class GridManager : MonoBehaviour
     {
         if (tempGems.Count != 6)
         {
-            Debug.LogWarning("sds");
             return false;
         }
 
@@ -294,6 +292,14 @@ public class GridManager : MonoBehaviour
 
             }
         }
+        string h = "[BROKEN MATCH]: " + getDimension(gems[7, 2]) + " " + getDimension(gems[7, 3]) + " " + getDimension(gems[7, 4]) + " " + getDimension(gems[7, 5]);
+
+        //
+        //
+        //
+        //
+
+        Debug.Log(h);
 
         DestroyMatchedGems();
         GridReady = false;
@@ -320,5 +326,9 @@ public class GridManager : MonoBehaviour
 
 
         matchedGems.Clear();
+    }
+    public string getDimension(Gem g)
+    {
+        return "(X:" + g.col + ", Y: " + g.row + ", Type: " + g.gemType + ")"; 
     }
 }
