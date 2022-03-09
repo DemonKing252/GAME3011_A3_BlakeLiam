@@ -111,6 +111,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99b7535b593339648b17eddb15cbfba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  seed: 1
+  gemCount: 3
   gemPrefabs:
   - {fileID: 5063540475421194518, guid: 50dad7a35cf4a104e879b8398f568f51, type: 3}
   - {fileID: 2417575689322652032, guid: d186275f30a6ee44a87988a2f4cea926, type: 3}

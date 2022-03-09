@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 
+
 public class GridManager : MonoBehaviour
 {
     public bool GridReady = false;
@@ -37,8 +38,10 @@ public class GridManager : MonoBehaviour
 
         if (tempGems[0] != null && tempGems[1] != null && tempGems[2] != null)
         {
+            //Debug.Log("Got here A2");
             if (tempGems[0].gemType == tempGems[1].gemType && tempGems[1].gemType == tempGems[2].gemType)
             {
+                //Debug.Log("Got here A3");
                 Debug.Log("We got a match of (3) at row: " + row.ToString() + " col: " + col.ToString());
                 foreach(Gem g in tempGems)
                 {
@@ -98,7 +101,6 @@ public class GridManager : MonoBehaviour
     {
         if (tempGems.Count != 5)
         {
-            Debug.LogWarning("sds");
             return false;
         }
 
@@ -181,10 +183,8 @@ public class GridManager : MonoBehaviour
 
         for (int i = 0; i < numColums; i++)
         {
-            tempGems.Add(gems[row, col + i].GetLeftNeighbor());
+            tempGems.Add(gems[row, col + i]);
         }
-        //
-        //
         
         return true;
     }
@@ -202,19 +202,17 @@ public class GridManager : MonoBehaviour
 
         for (int i = 0; i < numRows; i++)
         {
-            tempGems.Add(gems[row + i, col].GetDownNeighbor());
+            tempGems.Add(gems[row + i, col]);
         }
-        //
-        //
 
         return true;
     }
-
     public void CheckForMatches()
     {
         if (!GridReady)
             return;
 
+        
         for (int row = 0; row < 8; row++)
         {
             for (int col = 0; col < 8; col++)
@@ -225,16 +223,16 @@ public class GridManager : MonoBehaviour
                     if (CheckForMatchOf6(row, col))
                     {
                         // TODO: Destroy all matched gems and change the array location of the gems above..
-                        
+
                         continue;
                     }
                 }
                 if (AddNeighborColums(row, col, 5))
-                { 
+                {
                     if (CheckForMatchOf5(row, col))
                     {
                         // TODO: Destroy all matched gems and change the array location of the gems above..
-                        
+
                         continue;
                     }
                 }
@@ -244,7 +242,7 @@ public class GridManager : MonoBehaviour
                     if (CheckForMatchOf4(row, col))
                     {
                         // TODO: Destroy all matched gems and change the array location of the gems above..
-                        
+
                         continue;
                     }
                 }
@@ -314,10 +312,10 @@ public class GridManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         foreach (Gem g in matchedGems)
         {
-            Debug.Log("Respawning gem...");
             GemSpawner.Instance.SpawnGemAtColumn(g.col);
             yield return new WaitForSeconds(0.2f);
         }
+        yield return new WaitForSeconds(1f);
         GridReady = true;
 
 

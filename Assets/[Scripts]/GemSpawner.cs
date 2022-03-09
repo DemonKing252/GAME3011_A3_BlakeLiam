@@ -16,6 +16,12 @@ public enum GemType
 public class GemSpawner : MonoBehaviour
 {
     [SerializeField]
+    private int seed;
+
+    [SerializeField]
+    private int gemCount;
+
+    [SerializeField]
     private GameObject[] gemPrefabs;
 
     [SerializeField]
@@ -29,26 +35,49 @@ public class GemSpawner : MonoBehaviour
     public static GemSpawner Instance { get { return instance; } }
     private IEnumerator SpawnGrid()
     {
+        Random.seed = seed;
         GridManager.Instance.GridReady = false;
         for (int rows = 0; rows < 8; rows++)
         {
             // Spawn this row
             for (int cols = 0; cols < 8; cols++)
             {
-                int randIdx = Random.Range(0, gemPrefabs.Length);
-                GameObject go = Instantiate(gemPrefabs[randIdx], gemSpawners[cols].position, Quaternion.identity, gridMaskTransform);
-                Gem gemComp = go.GetComponent<Gem>();
+                int randIdx = Random.Range(0, gemCount);
 
-                // Since the first row spawning will be the last row, we have to do 8 - rows
-                gemComp.row = 7 - rows;
-                gemComp.col = cols;
-                gemComp.gemType = (GemType)randIdx;
+                //if ((rows == 7 - 7 || rows == 7 - 6 || rows == 7 - 5) && (cols == 6 || cols == 7) || (rows == 7 - 5 && cols == 5))
+                //if ((rows == 7 - 7) && (cols == 5 || cols == 6 || cols == 7) ||
+                //    rows == 7 - 4 && cols == 5 ||
+                //    rows == 7 - 5 && cols == 4 || 
+                //    rows == 7 - 5 && cols == 3)
+                //{
+                
+                //    GameObject go = Instantiate(gemPrefabs[0], gemSpawners[cols].position, Quaternion.identity, gridMaskTransform);
+                //    Gem gemComp = go.GetComponent<Gem>();
+                
+                //    // Since the first row spawning will be the last row, we have to do 8 - rows
+                //    gemComp.row = 7 - rows;
+                //    gemComp.col = cols;
+                //    gemComp.gemType = (GemType)0;
+                
+                //    GridManager.Instance.gems[7 - rows, cols] = gemComp;
+                //}
+                //else
+                {
+                    GameObject go = Instantiate(gemPrefabs[randIdx], gemSpawners[cols].position, Quaternion.identity, gridMaskTransform);
+                    Gem gemComp = go.GetComponent<Gem>();
 
-                GridManager.Instance.gems[7 - rows, cols] = gemComp;
+                    // Since the first row spawning will be the last row, we have to do 8 - rows
+                    gemComp.row = 7 - rows;
+                    gemComp.col = cols;
+                    gemComp.gemType = (GemType)randIdx;
+
+                    GridManager.Instance.gems[7 - rows, cols] = gemComp;
+                }
             }
             // Wait a 1/2 second then spawn the next row
             yield return new WaitForSeconds(0.25f);
         }
+        yield return new WaitForSeconds(1f);
         GridManager.Instance.GridReady = true;
     }
     public void SpawnEntireGrid()
@@ -57,7 +86,7 @@ public class GemSpawner : MonoBehaviour
     }
     public void SpawnGemAtColumn(int columnIdx)
     {
-        int randIdx = Random.Range(0, gemPrefabs.Length);
+        int randIdx = Random.Range(0, gemCount);
         GameObject go = Instantiate(gemPrefabs[randIdx], gemSpawners[columnIdx].position, Quaternion.identity, gridMaskTransform);
         Gem gemComp = go.GetComponent<Gem>();
 
@@ -65,7 +94,7 @@ public class GemSpawner : MonoBehaviour
         gemComp.col = columnIdx;
         
         // As the gem falls through the grid, it will intersect the row triggers and it will change row index accordingly.
-        gemComp.row = 0;
+        gemComp.row = 7;
 
         GridManager.Instance.gems[gemComp.row, gemComp.col] = gemComp;
     }
