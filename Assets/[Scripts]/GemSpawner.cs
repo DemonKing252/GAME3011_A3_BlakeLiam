@@ -12,7 +12,15 @@ public enum GemType
     Yellow,
     NumTypes
 }
-
+[System.Serializable]
+public class SpawnQueue
+{
+    public List<Vector3> gemQueue;
+    public SpawnQueue()
+    {
+        gemQueue = new List<Vector3>();
+    }
+}
 public class GemSpawner : MonoBehaviour
 {
     [SerializeField]
@@ -31,11 +39,12 @@ public class GemSpawner : MonoBehaviour
     [SerializeField]
     private Transform gridMaskTransform;
 
+    public SpawnQueue[] spawnPoints = new SpawnQueue[8];
     private static GemSpawner instance;
     public static GemSpawner Instance { get { return instance; } }
+    int i = 0;
     private IEnumerator SpawnGrid()
     {
-        Random.seed = seed;
         GridManager.Instance.GridReady = false;
         for (int rows = 0; rows < 8; rows++)
         {
@@ -44,26 +53,11 @@ public class GemSpawner : MonoBehaviour
             {
                 int randIdx = Random.Range(0, gemCount);
 
-                //if ((rows == 7 - 7 || rows == 7 - 6 || rows == 7 - 5) && (cols == 6 || cols == 7) || (rows == 7 - 5 && cols == 5))
-                //if ((rows == 7 - 7) && (cols == 5 || cols == 6 || cols == 7) ||
-                //    rows == 7 - 4 && cols == 5 ||
-                //    rows == 7 - 5 && cols == 4 || 
-                //    rows == 7 - 5 && cols == 3)
-                //{
-                
-                //    GameObject go = Instantiate(gemPrefabs[0], gemSpawners[cols].position, Quaternion.identity, gridMaskTransform);
-                //    Gem gemComp = go.GetComponent<Gem>();
-                
-                //    // Since the first row spawning will be the last row, we have to do 8 - rows
-                //    gemComp.row = 7 - rows;
-                //    gemComp.col = cols;
-                //    gemComp.gemType = (GemType)0;
-                
-                //    GridManager.Instance.gems[7 - rows, cols] = gemComp;
-                //}
-                //else
                 {
                     GameObject go = Instantiate(gemPrefabs[randIdx], gemSpawners[cols].position, Quaternion.identity, gridMaskTransform);
+                    i++;
+                    go.name = "Gem " + i.ToString();
+                    
                     Gem gemComp = go.GetComponent<Gem>();
 
                     // Since the first row spawning will be the last row, we have to do 8 - rows
@@ -75,19 +69,37 @@ public class GemSpawner : MonoBehaviour
                 }
             }
             // Wait a 1/2 second then spawn the next row
-            yield return new WaitForSeconds(0.25f);
+            yield return new WaitForSeconds(0.4f);
         }
-        yield return new WaitForSeconds(1f);
+
+        while (true)
+        {
+            bool boardSettled = true;
+            foreach (Gem g in GridManager.Instance.gems)
+            {
+                if (!g.IsStill)
+                    boardSettled = false;
+            }
+
+            if (boardSettled)
+            {
+                yield return new WaitForSeconds(0.3f);
+                break;
+            }
+
+            yield return null;
+        }
+
         GridManager.Instance.GridReady = true;
     }
     public void SpawnEntireGrid()
     {
         StartCoroutine(SpawnGrid());
     }
-    public void SpawnGemAtColumn(int columnIdx)
+    public void SpawnGemAtColumn(Gem g, int columnIdx)
     {
         int randIdx = Random.Range(0, gemCount);
-        GameObject go = Instantiate(gemPrefabs[randIdx], gemSpawners[columnIdx].position, Quaternion.identity, gridMaskTransform);
+        GameObject go = Instantiate(gemPrefabs[randIdx], g.spawnLoc, Quaternion.identity, gridMaskTransform);
         Gem gemComp = go.GetComponent<Gem>();
 
         gemComp.gemType = (GemType)randIdx;
@@ -98,15 +110,36 @@ public class GemSpawner : MonoBehaviour
 
         GridManager.Instance.gems[gemComp.row, gemComp.col] = gemComp;
     }
+
+    private void Awake()
+    {
+
+        instance = this;
+    }
     // Start is called before the first frame update
     void Start()
     {
-        instance = this;
         SpawnEntireGrid();
     }
-    // Update is called once per frame
-    void Update()
+    public void AddGemsToSpawnQueue(List<Gem> gems)
     {
-        
+        foreach (Gem g in gems)
+        {
+            //Debug.LogWarning(g.col + " - " + spawnPoints.Length);
+            float offsetY = (float)spawnPoints[g.col].gemQueue.Count * 0.1315f;
+
+            Vector3 spawnP = gemSpawners[g.col].position;
+            spawnP.y += offsetY;
+            g.spawnLoc = spawnP;
+
+            spawnPoints[g.col].gemQueue.Add(g.spawnLoc);
+        }
     }
+
+    public void ClearSpawnQueue()
+    {
+        foreach (SpawnQueue q in spawnPoints)
+            q.gemQueue.Clear();
+    }
+
 }

@@ -112,7 +112,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   seed: 1
-  gemCount: 3
+  gemCount: 7
   gemPrefabs:
   - {fileID: 5063540475421194518, guid: 50dad7a35cf4a104e879b8398f568f51, type: 3}
   - {fileID: 2417575689322652032, guid: d186275f30a6ee44a87988a2f4cea926, type: 3}
@@ -131,6 +131,15 @@ MonoBehaviour:
   - {fileID: 4953966881480718836}
   - {fileID: 4953966882693310978}
   gridMaskTransform: {fileID: 0}
+  spawnPoints:
+  - gemQueue: []
+  - gemQueue: []
+  - gemQueue: []
+  - gemQueue: []
+  - gemQueue: []
+  - gemQueue: []
+  - gemQueue: []
+  - gemQueue: []
 --- !u!1 &4953966881480718837
 GameObject:
   m_ObjectHideFlags: 0

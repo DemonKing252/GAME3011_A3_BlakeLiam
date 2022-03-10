@@ -6,6 +6,10 @@ using UnityEngine.Assertions;
 
 public class GridManager : MonoBehaviour
 {
+    public delegate void TurnOffKinematics();
+    public TurnOffKinematics onTurnOffKinematics;
+
+
     public bool GridReady = false;
     public Gem[,] gems = new Gem[8, 8];
     public List<Gem> matchedGems = new List<Gem>();
@@ -21,7 +25,7 @@ public class GridManager : MonoBehaviour
         }
     }
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         instance = this;
     }
@@ -74,7 +78,7 @@ public class GridManager : MonoBehaviour
         {
             if (tempGems[0].gemType == tempGems[1].gemType && tempGems[1].gemType == tempGems[2].gemType && tempGems[2].gemType == tempGems[3].gemType)
             {
-                Debug.Log("We got a match of (4) at row: " + row.ToString() + " col: " + col.ToString());
+                //Debug.Log("We got a match of (4) at row: " + row.ToString() + " col: " + col.ToString());
                 foreach (Gem g in tempGems)
                 {
                     bool noDuplicates = true;
@@ -107,7 +111,7 @@ public class GridManager : MonoBehaviour
         {
             if (tempGems[0].gemType == tempGems[1].gemType && tempGems[1].gemType == tempGems[2].gemType && tempGems[2].gemType == tempGems[3].gemType && tempGems[3].gemType == tempGems[4].gemType)
             {
-                Debug.Log("We got a match of (5) at row: " + row.ToString() + " col: " + col.ToString());
+                //Debug.Log("We got a match of (5) at row: " + row.ToString() + " col: " + col.ToString());
 
                 foreach (Gem g in tempGems)
                 {
@@ -142,7 +146,7 @@ public class GridManager : MonoBehaviour
         {
             if (tempGems[0].gemType == tempGems[1].gemType && tempGems[1].gemType == tempGems[2].gemType && tempGems[2].gemType == tempGems[3].gemType && tempGems[3].gemType == tempGems[4].gemType && tempGems[4].gemType == tempGems[5].gemType)
             {
-                Debug.Log("We got a match of (6) at row: " + row.ToString() + " col: " + col.ToString());
+                //Debug.Log("We got a match of (6) at row: " + row.ToString() + " col: " + col.ToString());
 
                 foreach (Gem g in tempGems)
                 {
@@ -292,15 +296,6 @@ public class GridManager : MonoBehaviour
 
             }
         }
-        string h = "[BROKEN MATCH]: " + getDimension(gems[7, 2]) + " " + getDimension(gems[7, 3]) + " " + getDimension(gems[7, 4]) + " " + getDimension(gems[7, 5]);
-
-        //
-        //
-        //
-        //
-
-        Debug.Log(h);
-
         DestroyMatchedGems();
         GridReady = false;
 
@@ -311,22 +306,49 @@ public class GridManager : MonoBehaviour
     }
     public IEnumerator EnumerateGems()
     {
+        SetGemsKinematic();
         foreach (Gem g in matchedGems)
             Destroy(g.gameObject);
-        
+
+
         // This has some issues
-        yield return new WaitForSeconds(0.5f);
+        //yield return new WaitForSeconds(0.5f);
+
+        GemSpawner.Instance.AddGemsToSpawnQueue(matchedGems);
+        
         foreach (Gem g in matchedGems)
         {
-            GemSpawner.Instance.SpawnGemAtColumn(g.col);
-            yield return new WaitForSeconds(0.2f);
+            GemSpawner.Instance.SpawnGemAtColumn(g, g.col);
+            //yield return new WaitForSeconds(0.2f);
         }
-        yield return new WaitForSeconds(1f);
-        GridReady = true;
+        GemSpawner.Instance.ClearSpawnQueue();
+        //Debug.Log("Respawned gems");
+        while (true)
+        {
+            bool boardSettled = true;
+            foreach (Gem g in gems)
+            {
+                if (!g.IsStill)
+                    boardSettled = false;
+            }
 
+            if (boardSettled)
+            {
+                yield return new WaitForSeconds(0.8f);
+                break;
+            }
 
+            yield return null;
+        }
         matchedGems.Clear();
+        GridReady = true;
     }
+
+    public void SetGemsKinematic()
+    {
+        onTurnOffKinematics?.Invoke();
+    }
+
     public string getDimension(Gem g)
     {
         return "(X:" + g.col + ", Y: " + g.row + ", Type: " + g.gemType + ")"; 
