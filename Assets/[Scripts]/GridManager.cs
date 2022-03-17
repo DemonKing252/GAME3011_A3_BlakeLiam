@@ -9,7 +9,7 @@ public class GridManager : MonoBehaviour
     public delegate void TurnOffKinematics();
     public TurnOffKinematics onTurnOffKinematics;
 
-
+    public bool CanMatch = false;
     public bool GridReady = false;
     public Gem[,] gems = new Gem[8, 8];
     public List<Gem> matchedGems = new List<Gem>();
@@ -17,6 +17,9 @@ public class GridManager : MonoBehaviour
     [SerializeField] private List<Gem> tempGems = new List<Gem>();
 
     private static GridManager instance;
+    [SerializeField] private Gem selectedGem1 = null;
+    [SerializeField] private Gem selectedGem2 = null;
+
     public static GridManager Instance
     {
         get
@@ -34,7 +37,47 @@ public class GridManager : MonoBehaviour
     void Update()
     {
         CheckForMatches();
+
+        //bool still = true;
+        //foreach(Gem g in gems)
+        //{
+        //    if (!g.IsStill)
+        //        still = false;
+        //}
+        //CanMatch = still;
     }
+
+    public void OnGemSelected(Gem gem)
+    {
+        if (!CanMatch)
+            return;
+
+        if (selectedGem1 == null)
+        {
+            selectedGem1 = gem;
+        }
+        else if (selectedGem2 == null)
+        {
+            if (selectedGem1 == gem)
+                selectedGem1 = null;
+            else
+                selectedGem2 = gem;
+        }
+        else
+        {
+            // TODO: Both gems selected, set them back to null, and select the first one
+            selectedGem1 = null;
+            selectedGem2 = null;
+
+            selectedGem1 = gem;
+        }
+        //if (selectedGem1 != null)
+        //    selectedGem1.GetComponent<SpriteRenderer>().color = Color.red;
+        //if (selectedGem2 != null)
+        //    selectedGem2.GetComponent<SpriteRenderer>().color = Color.red;
+    }
+
+
     private bool CheckForMatchOf3(int row, int col)
     {
         if (tempGems.Count != 3)
@@ -298,7 +341,6 @@ public class GridManager : MonoBehaviour
         }
         DestroyMatchedGems();
         GridReady = false;
-
     }
     public void DestroyMatchedGems()
     {

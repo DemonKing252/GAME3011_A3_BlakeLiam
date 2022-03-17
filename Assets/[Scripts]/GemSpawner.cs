@@ -45,6 +45,7 @@ public class GemSpawner : MonoBehaviour
     int i = 0;
     private IEnumerator SpawnGrid()
     {
+        GridManager.Instance.CanMatch = false;
         GridManager.Instance.GridReady = false;
         for (int rows = 0; rows < 8; rows++)
         {
@@ -91,6 +92,7 @@ public class GemSpawner : MonoBehaviour
         }
 
         GridManager.Instance.GridReady = true;
+        GridManager.Instance.CanMatch = true;
     }
     public void SpawnEntireGrid()
     {
