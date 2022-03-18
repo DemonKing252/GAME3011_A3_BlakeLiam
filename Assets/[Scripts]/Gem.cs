@@ -19,6 +19,16 @@ public class Gem : MonoBehaviour
     private Vector3 posThisFrame;
 
 
+    public string Info
+    {
+        get
+        {
+            return "[ Row: " + row.ToString() + ", Col: " + col.ToString() + " - Type: " + gemType.ToString() + " ]";
+        }
+    
+    }
+
+
     public bool IsStill 
     { 
         get

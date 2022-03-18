@@ -1229,6 +1229,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GridManager
       objectReference: {fileID: 0}
+    - target: {fileID: 2023411206129047444, guid: b2455ab9abce039499b6ce8e8db7fd5e, type: 3}
+      propertyPath: SwappingGems
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2983830296126403879, guid: b2455ab9abce039499b6ce8e8db7fd5e, type: 3}
       propertyPath: m_RootOrder
       value: 3

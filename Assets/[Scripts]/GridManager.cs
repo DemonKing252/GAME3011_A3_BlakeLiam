@@ -9,6 +9,7 @@ public class GridManager : MonoBehaviour
     public delegate void TurnOffKinematics();
     public TurnOffKinematics onTurnOffKinematics;
 
+    public bool SwappingGems = false;
     public bool CanMatch = false;
     public bool GridReady = false;
     public Gem[,] gems = new Gem[8, 8];
@@ -35,7 +36,7 @@ public class GridManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!GridReady)
+        if (!GridReady || SwappingGems)
             return;
         CheckForMatches();
 
@@ -74,6 +75,7 @@ public class GridManager : MonoBehaviour
     }
     private IEnumerator SwapGems()
     {
+        SwappingGems = true;
         Gem gem1 = selectedGems[0];
         Gem gem2 = selectedGems[1];
 
@@ -82,44 +84,91 @@ public class GridManager : MonoBehaviour
 
         SetGridPhysicsOn(false);
         float t = 0f;
+
+        if (selectedGems.Count != 2)
+            Debug.LogError("Selected gems count dont match 2!");
+
+        //Debug.LogWarning("Here");
+        bool sameRow = gem1.row == gem2.row;
+        bool sameCol = gem1.col == gem2.col;
+
+
         while (t < 0.75f)
         {
-            gem1.transform.position = Vector3.Lerp(gem1Loc, gem2Loc, t / 0.75f);
+            gem1.transform.position = Vector3.Lerp(gem1Loc, gem2Loc, t / 0.75f);         
             gem2.transform.position = Vector3.Lerp(gem2Loc, gem1Loc, t / 0.75f);
 
             t += Time.deltaTime;
             yield return null;
         }
+
+
         SetGridPhysicsOn(true);
 
-        int row1 = gem1.row;
-        int col1 = gem1.col;
+        // Horizontal swap
+        if (sameRow)
+        {
+            Debug.Log("comparing rows");
 
-        int row2 = gem2.row;
-        int col2 = gem2.col;
 
-        GemType type1 = gem1.gemType;
-        GemType type2 = gem2.gemType;
+            int col1 = gem1.col;
+            int col2 = gem2.col;
 
-        //gem1.row = row2;
-        //gem1.col = col2;
+            GemType type1 = gem1.gemType;
+            GemType type2 = gem2.gemType;
+            //
+            gems[gem1.row, gem1.col].col = col2;
+            gems[gem2.row, gem2.col].col = col1;
+            
+            //
+            gems[gem1.row, gem1.col].gemType = type2;
+            gems[gem2.row, gem2.col].gemType = type1;
+
+            //Gem temp1 = Instantiate(gem1, new Vector3(0f, -50f, 0f), Quaternion.identity);
+            //Gem temp2 = Instantiate(gem2, new Vector3(0f, -50f, 0f), Quaternion.identity);
+            //temp1.col = col2;
+            //temp2.col = col1;
+
+            //gems[gem1.row, gem1.col] = temp2;
+            //gems[gem2.row, gem2.col] = temp1;
+
+            //Destroy(temp1);
+            //Destroy(temp2);
+
+            string prnt = gems[7, 0].Info + " " + gems[7, 1].Info + " " + gems[7, 2].Info + " " + gems[7, 3].Info;
+            Debug.Log(prnt.ToString());
+        }
+        if (sameCol)
+        {
+            Debug.Log("comparing cols");
+
+            string prnt = gems[2, 1].Info + " " + gems[3, 1].Info + " " + gems[4, 1].Info + " " + gems[5, 1].Info;
+            Debug.Log(prnt.ToString());
+            //int col1 = gem1.col;
+            //int col2 = gem2.col;
+            //
+            //gem1.col = col2;
+            //gem2.col = col1;
+        }
+
+        //gems[gem1.row, gem1.col].row = row2;
+        //gems[gem1.row, gem1.col].col = col2;
         //
-        //gem2.row = row1;
-        //gem2.col = col1;
+        //gems[gem2.row, gem2.col].row = row1;
+        //gems[gem2.row, gem2.col].col = col1;
+        yield return new WaitForSeconds(0.5f);
 
-        gems[gem1.row, gem1.col].row = row2;
-        gems[gem1.row, gem1.col].col = col2;
-        //gems[gem1.row, gem1.col].gemType = type2;
+        bool match = CheckForMatches();
 
-        gems[gem2.row, gem2.col].row = row1;
-        gems[gem2.row, gem2.col].col = col1;
-        //gems[gem2.row, gem2.col].gemType = type1;
+
 
         //gem1.gemType = type2;
         //gem2.gemType = type1;
 
 
         selectedGems.Clear();
+
+        SwappingGems = false;
     }
     private void SetGridPhysicsOn(bool enabled)
     {

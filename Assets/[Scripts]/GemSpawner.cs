@@ -45,6 +45,8 @@ public class GemSpawner : MonoBehaviour
     int i = 0;
     private IEnumerator SpawnGrid()
     {
+        Random.seed = seed;
+
         GridManager.Instance.CanMatch = false;
         GridManager.Instance.GridReady = false;
         for (int rows = 0; rows < 8; rows++)
