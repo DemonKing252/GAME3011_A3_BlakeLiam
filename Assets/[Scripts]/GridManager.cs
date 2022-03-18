@@ -17,8 +17,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private List<Gem> tempGems = new List<Gem>();
 
     private static GridManager instance;
-    [SerializeField] private Gem selectedGem1 = null;
-    [SerializeField] private Gem selectedGem2 = null;
+    [SerializeField] private List<Gem> selectedGems = new List<Gem>();
 
     public static GridManager Instance
     {
@@ -36,6 +35,8 @@ public class GridManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!GridReady)
+            return;
         CheckForMatches();
 
         //bool still = true;
@@ -52,32 +53,82 @@ public class GridManager : MonoBehaviour
         if (!CanMatch)
             return;
 
-        if (selectedGem1 == null)
+        if (selectedGems.Count == 0)
         {
-            selectedGem1 = gem;
+            selectedGems.Add(gem);
         }
-        else if (selectedGem2 == null)
+        else if (selectedGems.Count == 1)
         {
-            if (selectedGem1 == gem)
-                selectedGem1 = null;
+            // Did we select the same gem as the first one?
+            if (gem == selectedGems[0])
+            {
+                selectedGems.Clear();
+            }
             else
-                selectedGem2 = gem;
-        }
-        else
-        {
-            // TODO: Both gems selected, set them back to null, and select the first one
-            selectedGem1 = null;
-            selectedGem2 = null;
+            {
+                selectedGems.Add(gem);
+                StartCoroutine(SwapGems());
+            }
 
-            selectedGem1 = gem;
         }
-        //if (selectedGem1 != null)
-        //    selectedGem1.GetComponent<SpriteRenderer>().color = Color.red;
-        //if (selectedGem2 != null)
-        //    selectedGem2.GetComponent<SpriteRenderer>().color = Color.red;
     }
+    private IEnumerator SwapGems()
+    {
+        Gem gem1 = selectedGems[0];
+        Gem gem2 = selectedGems[1];
+
+        Vector3 gem1Loc = selectedGems[0].transform.position;
+        Vector3 gem2Loc = selectedGems[1].transform.position;
+
+        SetGridPhysicsOn(false);
+        float t = 0f;
+        while (t < 0.75f)
+        {
+            gem1.transform.position = Vector3.Lerp(gem1Loc, gem2Loc, t / 0.75f);
+            gem2.transform.position = Vector3.Lerp(gem2Loc, gem1Loc, t / 0.75f);
+
+            t += Time.deltaTime;
+            yield return null;
+        }
+        SetGridPhysicsOn(true);
+
+        int row1 = gem1.row;
+        int col1 = gem1.col;
+
+        int row2 = gem2.row;
+        int col2 = gem2.col;
+
+        GemType type1 = gem1.gemType;
+        GemType type2 = gem2.gemType;
+
+        //gem1.row = row2;
+        //gem1.col = col2;
+        //
+        //gem2.row = row1;
+        //gem2.col = col1;
+
+        gems[gem1.row, gem1.col].row = row2;
+        gems[gem1.row, gem1.col].col = col2;
+        //gems[gem1.row, gem1.col].gemType = type2;
+
+        gems[gem2.row, gem2.col].row = row1;
+        gems[gem2.row, gem2.col].col = col1;
+        //gems[gem2.row, gem2.col].gemType = type1;
+
+        //gem1.gemType = type2;
+        //gem2.gemType = type1;
 
 
+        selectedGems.Clear();
+    }
+    private void SetGridPhysicsOn(bool enabled)
+    {
+        foreach(Gem g in gems)
+        {
+            if (g != null)
+                g.GetComponent<Rigidbody2D>().isKinematic = !enabled;
+        }
+    }
     private bool CheckForMatchOf3(int row, int col)
     {
         if (tempGems.Count != 3)
@@ -252,12 +303,10 @@ public class GridManager : MonoBehaviour
 
         return true;
     }
-    public void CheckForMatches()
+    public bool CheckForMatches()
     {
-        if (!GridReady)
-            return;
 
-        
+        bool matchMade = false;
         for (int row = 0; row < 8; row++)
         {
             for (int col = 0; col < 8; col++)
@@ -268,7 +317,7 @@ public class GridManager : MonoBehaviour
                     if (CheckForMatchOf6(row, col))
                     {
                         // TODO: Destroy all matched gems and change the array location of the gems above..
-
+                        matchMade = true;
                         continue;
                     }
                 }
@@ -277,7 +326,7 @@ public class GridManager : MonoBehaviour
                     if (CheckForMatchOf5(row, col))
                     {
                         // TODO: Destroy all matched gems and change the array location of the gems above..
-
+                        matchMade = true;
                         continue;
                     }
                 }
@@ -287,7 +336,7 @@ public class GridManager : MonoBehaviour
                     if (CheckForMatchOf4(row, col))
                     {
                         // TODO: Destroy all matched gems and change the array location of the gems above..
-
+                        matchMade = true;
                         continue;
                     }
                 }
@@ -296,7 +345,7 @@ public class GridManager : MonoBehaviour
                     if (CheckForMatchOf3(row, col))
                     {
                         // TODO: Destroy all matched gems and change the array location of the gems above..
-
+                        matchMade = true;
                         continue;
                     }
                 }
@@ -306,6 +355,7 @@ public class GridManager : MonoBehaviour
                     if (CheckForMatchOf6(row, col))
                     {
                         // TODO: Destroy all matched gems and change the array location of the gems above..
+                        matchMade = true;
                         continue;
                     }
                 }
@@ -315,6 +365,7 @@ public class GridManager : MonoBehaviour
                     if (CheckForMatchOf5(row, col))
                     {
                         // TODO: Destroy all matched gems and change the array location of the gems above..
+                        matchMade = true;
                         continue;
                     }
                 }
@@ -324,6 +375,7 @@ public class GridManager : MonoBehaviour
                     if (CheckForMatchOf4(row, col))
                     {
                         // TODO: Destroy all matched gems and change the array location of the gems above..
+                        matchMade = true;
                         continue;
                     }
                 }
@@ -332,6 +384,7 @@ public class GridManager : MonoBehaviour
                     if (CheckForMatchOf3(row, col))
                     {
                         // TODO: Destroy all matched gems and change the array location of the gems above..
+                        matchMade = true;
                         continue;
                     }
                 }
@@ -341,6 +394,7 @@ public class GridManager : MonoBehaviour
         }
         DestroyMatchedGems();
         GridReady = false;
+        return matchMade;
     }
     public void DestroyMatchedGems()
     {
