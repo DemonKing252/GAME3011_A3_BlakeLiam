@@ -92,7 +92,29 @@ public class GridManager : MonoBehaviour
         bool sameRow = gem1.row == gem2.row;
         bool sameCol = gem1.col == gem2.col;
 
-
+        
+        // Horizontal swap
+        if (sameRow)
+        {
+            // The gems selected are not next to eachother
+            if (Mathf.Abs(gem1.col - gem2.col) > 1)
+            {
+                selectedGems.Clear();
+                yield break;
+            }
+        }
+        // Vertical swap
+        if (sameCol)
+        {
+            // The gems selected are not next to eachother
+            if (Mathf.Abs(gem1.row - gem2.row) > 1)
+            {
+                print("not next to eachother");
+                selectedGems.Clear();
+                yield break;
+            }
+        }
+        print("this shouldbe be here");
         while (t < 0.75f)
         {
             gem1.transform.position = Vector3.Lerp(gem1Loc, gem2Loc, t / 0.75f);         
@@ -101,73 +123,26 @@ public class GridManager : MonoBehaviour
             t += Time.deltaTime;
             yield return null;
         }
-
-
         SetGridPhysicsOn(true);
-
-        // Horizontal swap
-        if (sameRow)
-        {
-            Debug.Log("comparing rows");
-
-
-            int col1 = gem1.col;
-            int col2 = gem2.col;
-
-            GemType type1 = gem1.gemType;
-            GemType type2 = gem2.gemType;
-            //
-            gems[gem1.row, gem1.col].col = col2;
-            gems[gem2.row, gem2.col].col = col1;
-            
-            //
-            gems[gem1.row, gem1.col].gemType = type2;
-            gems[gem2.row, gem2.col].gemType = type1;
-
-            //Gem temp1 = Instantiate(gem1, new Vector3(0f, -50f, 0f), Quaternion.identity);
-            //Gem temp2 = Instantiate(gem2, new Vector3(0f, -50f, 0f), Quaternion.identity);
-            //temp1.col = col2;
-            //temp2.col = col1;
-
-            //gems[gem1.row, gem1.col] = temp2;
-            //gems[gem2.row, gem2.col] = temp1;
-
-            //Destroy(temp1);
-            //Destroy(temp2);
-
-            string prnt = gems[7, 0].Info + " " + gems[7, 1].Info + " " + gems[7, 2].Info + " " + gems[7, 3].Info;
-            Debug.Log(prnt.ToString());
-        }
-        if (sameCol)
-        {
-            Debug.Log("comparing cols");
-
-            string prnt = gems[2, 1].Info + " " + gems[3, 1].Info + " " + gems[4, 1].Info + " " + gems[5, 1].Info;
-            Debug.Log(prnt.ToString());
-            //int col1 = gem1.col;
-            //int col2 = gem2.col;
-            //
-            //gem1.col = col2;
-            //gem2.col = col1;
-        }
-
-        //gems[gem1.row, gem1.col].row = row2;
-        //gems[gem1.row, gem1.col].col = col2;
-        //
-        //gems[gem2.row, gem2.col].row = row1;
-        //gems[gem2.row, gem2.col].col = col1;
-        yield return new WaitForSeconds(0.5f);
-
+        // Check for matches on the board
         bool match = CheckForMatches();
+        if (!match)
+        {
+            // There is no match, swap them back
 
+            SetGridPhysicsOn(false);
+            while (t > 0f)
+            {
+                gem1.transform.position = Vector3.Lerp(gem1Loc, gem2Loc, t / 0.75f);
+                gem2.transform.position = Vector3.Lerp(gem2Loc, gem1Loc, t / 0.75f);
 
-
-        //gem1.gemType = type2;
-        //gem2.gemType = type1;
-
+                t -= Time.deltaTime;
+                yield return null;
+            }
+            SetGridPhysicsOn(true);
+        }
 
         selectedGems.Clear();
-
         SwappingGems = false;
     }
     private void SetGridPhysicsOn(bool enabled)

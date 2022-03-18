@@ -45,7 +45,17 @@ public class GemSpawner : MonoBehaviour
     int i = 0;
     private IEnumerator SpawnGrid()
     {
-        Random.seed = seed;
+        /*
+        Valid Seeds:
+            2,19,24
+         
+        */
+        // Seed values that I know have no matches from the initial grid
+        // In the interest of time, I decided to prevent no cascades from the beginning using this method
+        // because the user will never notice this.
+        int[] seeds = { 2, 19, 24 };
+
+        Random.seed = seeds[Random.Range(0, seeds.Length)];
 
         GridManager.Instance.CanMatch = false;
         GridManager.Instance.GridReady = false;
