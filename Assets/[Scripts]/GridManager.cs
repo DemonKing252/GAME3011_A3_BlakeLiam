@@ -20,6 +20,19 @@ public class GridManager : MonoBehaviour
     private static GridManager instance;
     [SerializeField] private List<Gem> selectedGems = new List<Gem>();
 
+    private Difficulty difficulty;
+    public Difficulty Difficulty
+    {
+        get
+        {
+            return difficulty;
+        }
+        set
+        {
+            difficulty = value;
+        }
+    }
+
     public static GridManager Instance
     {
         get
