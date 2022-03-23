@@ -43,3 +43,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f09559ecb10fcb9419e6a5beff114bdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SwappingGems: 0
+  CanMatch: 0
+  GridReady: 0
+  matchedGems: []
+  tempGems: []
+  selectedGems: []
+  matchesandScoreText: {fileID: 0}
+  chainText: {fileID: 0}
+  cascadeText: {fileID: 0}

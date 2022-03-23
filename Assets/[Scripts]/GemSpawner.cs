@@ -42,7 +42,7 @@ public class GemSpawner : MonoBehaviour
     public SpawnQueue[] spawnPoints = new SpawnQueue[8];
     private static GemSpawner instance;
     public static GemSpawner Instance { get { return instance; } }
-    int i = 0;
+    public int i = 0;
     private IEnumerator SpawnGrid()
     {
         /*
@@ -102,9 +102,10 @@ public class GemSpawner : MonoBehaviour
 
             yield return null;
         }
-
+        GridManager.Instance.runTimer = true;
         GridManager.Instance.GridReady = true;
         GridManager.Instance.CanMatch = true;
+        GridManager.Instance.SetDesc();
     }
     public void SpawnEntireGrid()
     {
@@ -114,6 +115,8 @@ public class GemSpawner : MonoBehaviour
     {
         int randIdx = Random.Range(0, gemCount);
         GameObject go = Instantiate(gemPrefabs[randIdx], g.spawnLoc, Quaternion.identity, gridMaskTransform);
+        i++;
+        go.name = "Gem " + i.ToString(); 
         Gem gemComp = go.GetComponent<Gem>();
 
         gemComp.gemType = (GemType)randIdx;

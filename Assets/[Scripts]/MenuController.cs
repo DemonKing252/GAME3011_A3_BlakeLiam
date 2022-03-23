@@ -5,9 +5,10 @@ using TMPro;
 using UnityEngine.SceneManagement;
 public enum Difficulty
 {
-    Easy,
-    Normal,
-    Hard
+    Begginer,
+    Intermediate,
+    Advanced,
+    Expert
 }
 public enum Action
 {
@@ -28,9 +29,19 @@ public class MenuController : MonoBehaviour
     [SerializeField] Canvas loseCanvas;
     [SerializeField] Canvas winCanvas;
 
+    private static MenuController instance;
+    public static MenuController Instance
+    {
+        get { return instance; }
+    }
+    public string DescName
+    {
+        get { return descriptionText.text; }
+    }
 
     void Awake()
     {
+        instance = this;
         gridMgr = FindObjectOfType<GridManager>();    
     }
     // Start is called before the first frame update
@@ -93,9 +104,10 @@ public class MenuController : MonoBehaviour
         gridMgr.Difficulty = (Difficulty)val;
         string desc = (Difficulty)val switch
         {
-            Difficulty.Easy   => "Get 25x matches in 3 minutes!\n<size=60%>Match up 25 gems, it doesn't matter what type, your not punished by miss clicking</size>",
-            Difficulty.Normal => "Get a 40x chain in 3 minutes!\n<size=60%>Getting a chain requires you to get multiple matches in a row, without miss clicking any jewels!</size>",
-            Difficulty.Hard   => "Get a 3x cascade in 3 minutes!\n<size=60%>Getting a cascade requires you to get multiple matches in ONE move!. For example, getting 4 matches in one move would be a x4 cascade!</size>",   
+            Difficulty.Begginer       => "Get 10x matches in 3 minutes!\n<size=60%>Get atleast 10 matches. Your not punished by miss clicking</size>",
+            Difficulty.Intermediate   => "Get a 15x chain in 3 minutes!\n<size=60%>In order to get and MAINTAIN a chain, you need to get multiple matches in a row. If you make a move and theres no matches, your chain is reset</size>",   
+            Difficulty.Advanced       => "Destroy 4 gems in one move!\n<size=60%>You have to get a match of 4 of any type of gem.</size>",   
+            Difficulty.Expert         => "Get a 4x cascade in 3 minutes!\n<size=60%>This one WILL be difficult I can assure you. Getting a cascade requires you to get MULTIPLE matches in ONE move!. For example, getting 4 matches in one move would be a x4 cascade!</size>",   
         };
         SetDescriptionText(desc);
     }

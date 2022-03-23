@@ -5,7 +5,7 @@ using UnityEngine;
 public class RowTrigger : MonoBehaviour
 {
     public int row = -1;
-    void OnTriggerEnter2D(Collider2D collision)
+    void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.CompareTag("Gem"))
         {

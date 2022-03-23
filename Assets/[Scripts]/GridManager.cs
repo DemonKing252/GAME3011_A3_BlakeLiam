@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
-
+using TMPro;
 
 public class GridManager : MonoBehaviour
 {
@@ -11,7 +11,7 @@ public class GridManager : MonoBehaviour
 
     public bool SwappingGems = false;
     public bool CanMatch = false;
-    public bool GridReady = false;
+    public bool GridReady;
     public Gem[,] gems = new Gem[8, 8];
     public List<Gem> matchedGems = new List<Gem>();
     
@@ -19,6 +19,74 @@ public class GridManager : MonoBehaviour
 
     private static GridManager instance;
     [SerializeField] private List<Gem> selectedGems = new List<Gem>();
+
+    [SerializeField] private TMP_Text matchesandScoreText;
+    [SerializeField] private TMP_Text chainText;
+    [SerializeField] private TMP_Text cascadeText;
+    [SerializeField] private TMP_Text timeText;
+    [SerializeField] private TMP_Text objectiveText;
+
+    private int currentScore = 0;
+    private int currentMatches = 0;
+    private int currentChain = 0;
+    private int currentCascade = 0;
+
+    private int bestScore = 0;
+    private int bestMatches = 0;
+    private int bestChain = 0;
+    private int bestCascade = 0;
+
+    [SerializeField] private float startingTime = 180f;
+
+    private float time = 0f;
+
+    private int minutes = 0;
+    private int seconds = 0;
+
+    public bool runTimer = false;
+
+    public int Score
+    {
+        get { return currentScore; }
+        set 
+        {
+            currentScore = value; 
+            matchesandScoreText.text = "Matches:\n" + currentMatches.ToString() + "\nScore:\n" + currentScore.ToString(); 
+        }
+    }
+    public int Matches
+    {
+        get { return currentMatches; }
+        set 
+        { 
+            currentMatches = value; 
+            matchesandScoreText.text = "Matches:\n" + currentMatches.ToString() + "\nScore:\n" + currentScore.ToString(); 
+        }
+    }
+    public int Chain
+    {
+        get { return currentChain; }
+        set 
+        { 
+            currentChain = value;
+            if (currentChain > bestChain)
+                bestChain = value;
+
+            chainText.text = "Chain:\n" + currentChain + "\n<size=90%><color=grey>Best:\n" + bestChain.ToString() + "</size></color>";
+        }
+    }
+    public int Cascade
+    {
+        get { return currentCascade; }
+        set
+        {
+            currentCascade = value;
+            if (currentCascade > bestCascade)
+                bestCascade = value;
+
+            cascadeText.text = "Cascade:\n" + currentCascade + "\n<size=90%><color=grey>Best:\n" + bestCascade.ToString() + "</size></color>";
+        }
+    }
 
     private Difficulty difficulty;
     public Difficulty Difficulty
@@ -44,22 +112,34 @@ public class GridManager : MonoBehaviour
     void Awake()
     {
         instance = this;
+        time = startingTime;
+    }
+
+    public void SetDesc()
+    {
+        objectiveText.text = MenuController.Instance.DescName;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (runTimer)
+        {
+            time -= Time.deltaTime;
+
+            if (time < 0f)
+                MenuController.Instance.OnAction((int)Action.Defeat);
+
+            time = Mathf.Clamp(time, 0f, Mathf.Infinity);
+            minutes = Mathf.FloorToInt(time / 60f);
+            seconds = (int)time % 60;
+            timeText.text = minutes.ToString() + ":" + seconds.ToString("00");
+        }
+
         if (!GridReady || SwappingGems)
             return;
         CheckForMatches();
 
-        //bool still = true;
-        //foreach(Gem g in gems)
-        //{
-        //    if (!g.IsStill)
-        //        still = false;
-        //}
-        //CanMatch = still;
     }
 
     public void OnGemSelected(Gem gem)
@@ -127,7 +207,8 @@ public class GridManager : MonoBehaviour
                 yield break;
             }
         }
-        print("this shouldbe be here");
+        Cascade = 0;
+        //print("this shouldbe be here");
         while (t < 0.75f)
         {
             gem1.transform.position = Vector3.Lerp(gem1Loc, gem2Loc, t / 0.75f);         
@@ -142,7 +223,7 @@ public class GridManager : MonoBehaviour
         if (!match)
         {
             // There is no match, swap them back
-
+            Chain = 0;
             SetGridPhysicsOn(false);
             while (t > 0f)
             {
@@ -226,6 +307,8 @@ public class GridManager : MonoBehaviour
                         matchedGems.Add(g);
                     }
                 }
+                if (difficulty == Difficulty.Advanced)
+                    MenuController.Instance.OnAction((int)Action.Victory);
                 return true;
             }
         }
@@ -261,6 +344,8 @@ public class GridManager : MonoBehaviour
                     }
                 }
 
+                if (difficulty == Difficulty.Advanced)
+                    MenuController.Instance.OnAction((int)Action.Victory);
                 return true;
             }
         }
@@ -295,6 +380,8 @@ public class GridManager : MonoBehaviour
                         matchedGems.Add(g);
                     }
                 }
+                if (difficulty == Difficulty.Advanced)
+                    MenuController.Instance.OnAction((int)Action.Victory);
 
                 return true;
             }
@@ -440,6 +527,28 @@ public class GridManager : MonoBehaviour
     public IEnumerator EnumerateGems()
     {
         SetGemsKinematic();
+
+        if (matchedGems.Count != 0)
+        {
+            Score += 100;
+            Matches++;
+            Chain++;
+            Cascade++;
+
+            if (difficulty == Difficulty.Begginer && Matches >= 10)
+            {
+                MenuController.Instance.OnAction((int)Action.Victory);
+            }
+            if (difficulty == Difficulty.Intermediate && Chain >= 15)
+            {
+                MenuController.Instance.OnAction((int)Action.Victory);
+            }
+            if (difficulty == Difficulty.Expert && Cascade >= 4)
+            {
+                MenuController.Instance.OnAction((int)Action.Victory);
+            }
+        }
+
         foreach (Gem g in matchedGems)
             Destroy(g.gameObject);
 
