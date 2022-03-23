@@ -13,6 +13,8 @@ public class GridManager : MonoBehaviour
     public bool CanMatch = false;
     public bool GridReady;
     public Gem[,] gems = new Gem[8, 8];
+    public List<Gem> gemList = new List<Gem>();
+
     public List<Gem> matchedGems = new List<Gem>();
     
     [SerializeField] private List<Gem> tempGems = new List<Gem>();
@@ -26,13 +28,14 @@ public class GridManager : MonoBehaviour
     [SerializeField] private TMP_Text timeText;
     [SerializeField] private TMP_Text objectiveText;
 
+    [SerializeField] public AudioSource btnClickSfx;
+    [SerializeField] public AudioSource themeSfx;
+
     private int currentScore = 0;
     private int currentMatches = 0;
     private int currentChain = 0;
     private int currentCascade = 0;
 
-    private int bestScore = 0;
-    private int bestMatches = 0;
     private int bestChain = 0;
     private int bestCascade = 0;
 
@@ -241,7 +244,7 @@ public class GridManager : MonoBehaviour
     }
     private void SetGridPhysicsOn(bool enabled)
     {
-        foreach(Gem g in gems)
+        foreach(Gem g in gemList)
         {
             if (g != null)
                 g.GetComponent<Rigidbody2D>().isKinematic = !enabled;
@@ -307,8 +310,6 @@ public class GridManager : MonoBehaviour
                         matchedGems.Add(g);
                     }
                 }
-                if (difficulty == Difficulty.Advanced)
-                    MenuController.Instance.OnAction((int)Action.Victory);
                 return true;
             }
         }
@@ -535,11 +536,11 @@ public class GridManager : MonoBehaviour
             Chain++;
             Cascade++;
 
-            if (difficulty == Difficulty.Begginer && Matches >= 10)
+            if (difficulty == Difficulty.Begginer && Matches >= 20)
             {
                 MenuController.Instance.OnAction((int)Action.Victory);
             }
-            if (difficulty == Difficulty.Intermediate && Chain >= 15)
+            if (difficulty == Difficulty.Intermediate && Chain >= 30)
             {
                 MenuController.Instance.OnAction((int)Action.Victory);
             }
@@ -550,7 +551,11 @@ public class GridManager : MonoBehaviour
         }
 
         foreach (Gem g in matchedGems)
+        {
+            btnClickSfx.Play();
+            gemList.Remove(g);
             Destroy(g.gameObject);
+        }
 
 
         // This has some issues

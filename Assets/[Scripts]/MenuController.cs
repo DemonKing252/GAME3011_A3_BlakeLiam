@@ -75,12 +75,16 @@ public class MenuController : MonoBehaviour
 
                 break;
             case Action.Victory:
+                GridManager.Instance.themeSfx.loop = false;
+                GridManager.Instance.themeSfx.Stop();
                 menuCanvas.gameObject.SetActive(false);
                 loseCanvas.gameObject.SetActive(false);
                 winCanvas.gameObject.SetActive(true);
                 Time.timeScale = 0f;
                 break;
             case Action.Defeat:
+                GridManager.Instance.themeSfx.loop = false;
+                GridManager.Instance.themeSfx.Stop();
                 menuCanvas.gameObject.SetActive(false);
                 loseCanvas.gameObject.SetActive(true);
                 winCanvas.gameObject.SetActive(false);
@@ -104,10 +108,10 @@ public class MenuController : MonoBehaviour
         gridMgr.Difficulty = (Difficulty)val;
         string desc = (Difficulty)val switch
         {
-            Difficulty.Begginer       => "Get 10x matches in 3 minutes!\n<size=60%>Get atleast 10 matches. Your not punished by miss clicking</size>",
-            Difficulty.Intermediate   => "Get a 15x chain in 3 minutes!\n<size=60%>In order to get and MAINTAIN a chain, you need to get multiple matches in a row. If you make a move and theres no matches, your chain is reset</size>",   
-            Difficulty.Advanced       => "Destroy 4 gems in one move!\n<size=60%>You have to get a match of 4 of any type of gem.</size>",   
-            Difficulty.Expert         => "Get a 4x cascade in 3 minutes!\n<size=60%>This one WILL be difficult I can assure you. Getting a cascade requires you to get MULTIPLE matches in ONE move!. For example, getting 4 matches in one move would be a x4 cascade!</size>",   
+            Difficulty.Begginer       => "Get 20x matches in 5 minutes!\n<size=60%>Get atleast 20 matches. Your not punished by miss clicking</size>",
+            Difficulty.Intermediate   => "Get a 30x chain in 5 minutes!\n<size=60%>In order to get and MAINTAIN a chain, you need to get multiple matches in a row. If you make a move and theres no matches, your chain is reset</size>",   
+            Difficulty.Advanced       => "Destroy 5 gems in one match in 5 minutes!\n<size=60%>You have to get a match of 5 of any type of gem. Keep in mind though, you have to match 5 gems in one match, not one move, cascades don't count for this challenge</size>",   
+            Difficulty.Expert         => "Get a 4x cascade in 5 minutes!\n<size=60%>This one WILL be difficult I can assure you. Getting a cascade requires you to get MULTIPLE matches in ONE move!. For example, getting 4 matches in one move would be a x4 cascade!</size>",   
         };
         SetDescriptionText(desc);
     }

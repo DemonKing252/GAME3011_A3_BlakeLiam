@@ -79,6 +79,8 @@ public class GemSpawner : MonoBehaviour
                     gemComp.gemType = (GemType)randIdx;
 
                     GridManager.Instance.gems[7 - rows, cols] = gemComp;
+                    GridManager.Instance.gemList.Add(gemComp);
+
                 }
             }
             // Wait a 1/2 second then spawn the next row
@@ -106,6 +108,8 @@ public class GemSpawner : MonoBehaviour
         GridManager.Instance.GridReady = true;
         GridManager.Instance.CanMatch = true;
         GridManager.Instance.SetDesc();
+        GridManager.Instance.themeSfx.loop = true;
+        GridManager.Instance.themeSfx.Play();
     }
     public void SpawnEntireGrid()
     {
@@ -125,6 +129,7 @@ public class GemSpawner : MonoBehaviour
         // As the gem falls through the grid, it will intersect the row triggers and it will change row index accordingly.
         gemComp.row = 0;
 
+        GridManager.Instance.gemList.Add(gemComp);
         GridManager.Instance.gems[gemComp.row, gemComp.col] = gemComp;
     }
 
