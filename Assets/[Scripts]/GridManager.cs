@@ -188,7 +188,22 @@ public class GridManager : MonoBehaviour
         bool sameRow = gem1.row == gem2.row;
         bool sameCol = gem1.col == gem2.col;
 
-        
+        foreach(Gem g in gemList)
+        {
+            if (g.gemBehaviour == GemBehaviour.TickingBomb)
+            {
+                g.NumMoves--;
+
+                if (g.NumMoves <= 0)
+                    MenuController.Instance.OnAction((int)Action.Defeat);
+            }
+        }
+        if (!sameRow && !sameCol)
+        {
+            selectedGems.Clear();
+            yield break;
+        }
+
         // Horizontal swap
         if (sameRow)
         {
@@ -310,6 +325,8 @@ public class GridManager : MonoBehaviour
                         matchedGems.Add(g);
                     }
                 }
+                if (difficulty == Difficulty.Advanced)
+                    MenuController.Instance.OnAction((int)Action.Victory);
                 return true;
             }
         }
@@ -544,7 +561,7 @@ public class GridManager : MonoBehaviour
             {
                 MenuController.Instance.OnAction((int)Action.Victory);
             }
-            if (difficulty == Difficulty.Expert && Cascade >= 4)
+            if (difficulty == Difficulty.Expert && Cascade >= 3)
             {
                 MenuController.Instance.OnAction((int)Action.Victory);
             }

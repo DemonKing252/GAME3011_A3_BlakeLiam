@@ -110,8 +110,8 @@ public class MenuController : MonoBehaviour
         {
             Difficulty.Begginer       => "Get 20x matches in 5 minutes!\n<size=60%>Get atleast 20 matches. Your not punished by miss clicking</size>",
             Difficulty.Intermediate   => "Get a 30x chain in 5 minutes!\n<size=60%>In order to get and MAINTAIN a chain, you need to get multiple matches in a row. If you make a move and theres no matches, your chain is reset</size>",   
-            Difficulty.Advanced       => "Destroy 5 gems in one match in 5 minutes!\n<size=60%>You have to get a match of 5 of any type of gem. Keep in mind though, you have to match 5 gems in one match, not one move, cascades don't count for this challenge</size>",   
-            Difficulty.Expert         => "Get a 4x cascade in 5 minutes!\n<size=60%>This one WILL be difficult I can assure you. Getting a cascade requires you to get MULTIPLE matches in ONE move!. For example, getting 4 matches in one move would be a x4 cascade!</size>",   
+            Difficulty.Advanced       => "Destroy 4 gems in one match in 5 minutes!\n<size=60%>You have to get a match of 5 of any type of gem. Keep in mind though, you have to match 4 gems in one match, not one move, cascades don't count for this challenge</size>",   
+            Difficulty.Expert         => "Get a 3x cascade in 5 minutes!\n<size=60%>This one WILL be difficult I can assure you. Getting a cascade requires you to get MULTIPLE matches in ONE move!. For example, getting 3 matches in one move would be a x3 cascade!</size>",   
         };
         SetDescriptionText(desc);
     }

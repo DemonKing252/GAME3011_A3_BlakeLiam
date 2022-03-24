@@ -125,7 +125,27 @@ public class GemSpawner : MonoBehaviour
 
         gemComp.gemType = (GemType)randIdx;
         gemComp.col = columnIdx;
+
+        int weight = GridManager.Instance.Difficulty switch
+        {
+            Difficulty.Begginer     => 0,       // 0% chance of ticking bomb on Beginner
+            Difficulty.Intermediate => 5,       // 5% chance of ticking bomb on Intermediate
+            Difficulty.Advanced     => 10,      // 10% chance of ticking bomb on Advanced
+            Difficulty.Expert       => 20       // 20% chance of ticking bomb on Expert
         
+        };
+
+
+        if (Random.Range(1, 100) < weight)
+        {
+            gemComp.gemBehaviour = GemBehaviour.TickingBomb;
+            gemComp.spriteRen.SetActive(true);
+        }
+        else
+        {
+            gemComp.gemBehaviour = GemBehaviour.Normal;
+        }
+
         // As the gem falls through the grid, it will intersect the row triggers and it will change row index accordingly.
         gemComp.row = 0;
 

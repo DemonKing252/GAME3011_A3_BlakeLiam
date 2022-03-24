@@ -1,14 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+public enum GemBehaviour
+{
+    Normal,
+    TickingBomb
+}
 public class Gem : MonoBehaviour
 {
     public LayerMask gemMask;
     public Vector3 spawnLoc;
     public GemType gemType;
+    public GemBehaviour gemBehaviour;
     public int row = -1;
     public int col = -1;
+    public GameObject spriteRen;
+    public TextMesh bombText;
+    [SerializeField] private int numMoves = 25;
+    public int NumMoves { get { return numMoves; } set { numMoves = value; bombText.text = numMoves.ToString(); } }
 
     public Rigidbody2D rb;
     public bool gravityEnabled = true;
@@ -86,6 +95,7 @@ public class Gem : MonoBehaviour
     private void Awake()
     {
         GridManager.Instance.onTurnOffKinematics += OnKinematicsOff;
+        bombText.text = numMoves.ToString();
     }
     private void OnDestroy()
     {
